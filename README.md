@@ -94,3 +94,37 @@ void distribuer_cartes(Partie *partie) {
         reveler_deux_cartes(&partie->joueurs[i]);
     }
 }
+
+void tour_joueur(Partie *partie) {
+    Joueur *joueur = &partie->joueurs[partie->joueur_actuel];
+    printf("\nTour de %s\n", joueur->nom);
+
+    Carte piochee = partie->pioche[partie->index_pioche++];
+    printf("Carte piochée : %d\n", piochee.valeur);
+
+    int l, c;
+    do {
+        printf("\n Echange avec quelle carte ? (Ligne / Colonne entre 0-2 et 0-3) : ");
+        scanf("%d %d", &l, &c);
+        if ((l < 0 || l > 2) || (c < 0 || c > 3)) {
+            printf("Erreur. Coordonnées incorrectes !\nVeuillez bien respecter : Ligne 0-2 / Colonne 0-3.\n");
+        }
+    } while ((l < 0 || l > 2) || (c < 0 || c > 3));
+
+    Carte ancienne = joueur->grille[l][c];
+    joueur->grille[l][c] = piochee;
+    joueur->grille[l][c].visible = true;
+}
+
+
+
+// Calculer le score total d'un joueur
+int calculer_score(const Joueur *joueur) {
+    int score = 0;
+    for (int l = 0; l < LIGNES; l++) {
+        for (int c = 0; c < COLONNES; c++) {
+            score += joueur->grille[l][c].valeur;
+        }
+    }
+    return score;
+}

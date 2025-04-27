@@ -10,6 +10,13 @@
 #define COLONNES 4
 #define NB_MAX_CARTES 150
 
+#define RESET   "\033[0m"
+#define VIOLET  "\033[35m"
+#define BLEU_CLAIR "\033[36m"
+#define VERT    "\033[32m"
+#define JAUNE   "\033[33m"
+#define ROUGE   "\033[31m"
+
 
 typedef struct {
     int valeur;
@@ -30,7 +37,41 @@ typedef struct {
     int joueur_actuel;
 } Partie;
 
+const char* couleur_carte(int valeur) {
+    if (valeur == -2 || valeur == -1) return VIOLET;
+    if (valeur == 0) return BLEU_CLAIR;
+    if (valeur >= 1 && valeur <= 4) return VERT;
+    if (valeur >= 5 && valeur <= 8) return JAUNE;
+    return ROUGE;
+}
 
+// Affichage d'une ligne de grille pour un joueur
+void afficher_ligne_grille(Carte ligne[]) {
+    for (int i = 0; i < 4; i++) {
+        for (int c = 0; c < COLONNES; c++) {
+            Carte carte = ligne[c];
+            const char *couleur = carte.visible ? couleur_carte(carte.valeur) : "";
+            switch (i) {
+                case 0:
+                    printf("%s+-----+%s ", couleur, RESET);
+                    break;
+                case 1:
+                    if (carte.visible)
+                        printf("%s| %3d |%s ", couleur, carte.valeur, RESET);
+                    else
+                        printf("|CARD | ");
+                    break;
+                case 2:
+                    printf("|YARD | ");
+                    break;
+                case 3:
+                    printf("%s+-----+%s ", couleur, RESET);
+                    break;
+            }
+        }
+        printf("\n");
+    }
+}
 void debut_partie(Partie *partie) {
     printf("\n====================================CARD YARD===================================\n\nBonjour et bienvenue aux jeu du Card Yard!\nLes règles sont simples chaque joueurs possède 12 cartes à vous de vous en débarrasser le plus vite possible\n BONNE CHANCE ;) \n\n");
 

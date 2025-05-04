@@ -9,19 +9,19 @@ void afficher_ligne_grille(const Carte ligne[]) {
             const char *couleur = carte.visible ? couleur_carte(carte.valeur) : "";
             switch (i) {
                 case 0:
-                    printf("%s+-----+%s ", couleur, RESET);
+                    printf("%s╔════╗%s ", couleur, RESET);
                     break;
                 case 1:
                     if (carte.visible)
-                        printf("%s| %3d |%s ", couleur, carte.valeur, RESET);
+                        printf("%s║ %3d║%s ", couleur, carte.valeur, RESET);
                     else
-                        printf("|CARD | ");
+                        printf("║CARD║ ");
                     break;
                 case 2:
-                    printf("|YARD | ");
+                    printf("║YARD║ ");
                     break;
                 case 3:
-                    printf("%s+-----+%s ", couleur, RESET);
+                    printf("%s╚════╝%s ", couleur, RESET);
                     break;
             }
         }

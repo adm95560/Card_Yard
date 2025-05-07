@@ -1,6 +1,12 @@
 #ifndef JEU_H
 #define JEU_H
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
 #define LIGNES 3
 #define COLONNES 4
 #define MAX_JOUEURS 8
@@ -14,42 +20,21 @@
 #define JAUNE       "\033[33m"
 #define ROUGE       "\033[31m"
 
-// Structure Carte
-typedef struct {
-    int valeur;
-    bool visible;
-} Carte;
 
-// Structure Joueur
-typedef struct {
-    char nom[20];
-    Carte grille[LIGNES][COLONNES];
-} Joueur;
+#include "types.h"
 
-// Structure Partie
-typedef struct {
-    Joueur joueurs[MAX_JOUEURS];
-    Carte pioche[NB_MAX_CARTES];
-    int taille_pioche;
-    int index_pioche;
-    Carte defausse;
-    bool defausse_active;
-    int nb_joueurs;
-    int joueur_actuel;
-} Partie;
 
-// Prototypes
+
+const char* couleur_carte(int valeur);
 void debut_partie(Partie *partie);
 void melanger_pioche(Carte *pioche, int taille);
 void distribuer_cartes(Partie *partie);
 void reveler_deux_cartes(Joueur *joueur);
-void afficher_table(const Partie *partie);
-void afficher_ligne_grille(const Carte ligne[]);
-void afficher_grille_joueur(const Joueur *joueur);
-const char* couleur_carte(int valeur);
 void tour_joueur(Partie *partie);
+void verifier_et_supprimer_colonnes(Joueur *joueur);
 bool partie_terminee(const Partie *partie);
 int calculer_score(const Joueur *joueur);
-void verifier_et_supprimer_colonnes(Joueur *joueur);
 
-#endif
+#endif // JEU_H
+
+

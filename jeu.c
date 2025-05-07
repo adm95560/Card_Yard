@@ -1,7 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <time.h>
+
+#define LIGNES 3
+#define COLONNES 4
+#define MAX_JOUEURS 8
+#define NB_MAX_CARTES 150
+
+// Codes couleur ANSI
+#define RESET       "\033[0m"
+#define VIOLET      "\033[35m"
+#define BLEU_CLAIR  "\033[36m"
+#define VERT        "\033[32m"
+#define JAUNE       "\033[33m"
+#define ROUGE       "\033[31m"
+
 #include "jeu.h"
+#include "affichage.h"
+
 
 // Fonction utilitaire pour obtenir la couleur selon la valeur
 const char* couleur_carte(int valeur) {
@@ -12,17 +29,31 @@ const char* couleur_carte(int valeur) {
     return ROUGE;
 }
 
-// Début de la partie
 void debut_partie(Partie *partie) {
-    printf("\n====================================CARD YARD===================================\n\nBienvenue au jeu Card Yard!\nLes règles sont simples, chaque joueur possède 12 cartes et doit s'en débarrasser le plus vite possible!\n");
 
+printf("\033[1;32m");
+printf("╔══════════════════════════════════════════════════════════════════════════════╗\n");
+printf("║                               🌟 CARD YARD 🌟                                ║\n");
+printf("╠══════════════════════════════════════════════════════════════════════════════╣\n");
+printf("║                Bienvenue dans le monde stratégique du Card Yard !            ║\n");
+printf("║       Chaque joueur possède 12 cartes et doit les échanger ou les révéler    ║\n");
+printf("║      de manière stratégique pour accumuler le moins de points possible !     ║\n");
+printf("║        Serez-vous le maître du Yard ou resterez-vous à la traîne ? 👀        ║\n");
+printf("╚══════════════════════════════════════════════════════════════════════════════╝\n\n");
+printf("\033[0m");
+
+    int valid_input;
     do {
         printf("Nombre de joueurs (2-%d) : ", MAX_JOUEURS);
-        scanf("%d", &partie->nb_joueurs);
-        if (partie->nb_joueurs < 2 || partie->nb_joueurs > MAX_JOUEURS) {
-            printf("Erreur ! Vous devez choisir un nombre de joueurs entre 2 et 8.\n");
+        valid_input = scanf("%d", &partie->nb_joueurs);
+
+        if (valid_input != 1 || partie->nb_joueurs < 2 || partie->nb_joueurs > MAX_JOUEURS) {
+            printf("Erreur ! Vous devez entrer un nombre entre 2 et %d.\n", MAX_JOUEURS);
+
+            // Vider le buffer pour éviter une boucle infinie
+            while (getchar() != '\n');
         }
-    } while (partie->nb_joueurs < 2 || partie->nb_joueurs > MAX_JOUEURS);
+    } while (valid_input != 1 || partie->nb_joueurs < 2 || partie->nb_joueurs > MAX_JOUEURS);
 
     for (int i = 0; i < partie->nb_joueurs; i++) {
         printf("Nom du joueur %d : ", i + 1);
@@ -86,10 +117,24 @@ void tour_joueur(Partie *partie) {
 
     int choix;
     Carte carte_choisie;
+    char buffer[100];
 
     if (partie->defausse_active) {
         printf("1. Prendre carte de la pioche\n2. Prendre la carte de la défausse (%d)\nChoix : ", partie->defausse.valeur);
-        scanf("%d", &choix);
+       
+        // Lecture sécurisée du choix
+        while (1) {
+            if (!fgets(buffer, sizeof(buffer), stdin)) {
+                printf("Erreur de lecture. Réessayez : ");
+                continue;
+            }
+            if (sscanf(buffer, "%d", &choix) != 1 || (choix != 1 && choix != 2)) {
+                printf("❌ Entrée invalide. Veuillez taper 1 ou 2 : ");
+            } else {
+                break;
+            }
+        }
+
         if (choix == 2) {
             carte_choisie = partie->defausse;
             partie->defausse_active = false;
@@ -104,13 +149,21 @@ void tour_joueur(Partie *partie) {
     printf("Carte choisie : %d\n", carte_choisie.valeur);
 
     int l, c;
+    // Saisie sécurisée des coordonnées
     do {
         printf("Échange avec quelle carte ? (Ligne 0-2 / Colonne 0-3) : ");
-        scanf("%d %d", &l, &c);
-        if ((l < 0 || l > 2) || (c < 0 || c > 3)) {
-            printf("Erreur. Coordonnées incorrectes !\n");
+
+        if (!fgets(buffer, sizeof(buffer), stdin)) {
+            printf("Erreur de lecture. Réessayez.\n");
+            continue;
         }
-    } while ((l < 0 || l > 2) || (c < 0 || c > 3));
+
+        if (sscanf(buffer, "%d %d", &l, &c) != 2 || l < 0 || l > 2 || c < 0 || c > 3) {
+            printf("❌ Erreur. Vous devez entrer exactement deux entiers séparés d'un espace !,par exemple :1 2,(ligne 0-2 et colonne 0-3)\n");
+        } else {
+            break;  // Entrée correcte
+        }
+    } while (1);
 
     Carte ancienne = joueur->grille[l][c];
     joueur->grille[l][c] = carte_choisie;
@@ -122,6 +175,7 @@ void tour_joueur(Partie *partie) {
 
     verifier_et_supprimer_colonnes(joueur);
 }
+
 
 // Vérifier et supprimer automatiquement les colonnes identiques
 void verifier_et_supprimer_colonnes(Joueur *joueur) {
@@ -167,5 +221,3 @@ int calculer_score(const Joueur *joueur) {
             score += joueur->grille[l][c].valeur;
         }
     }
-    return score;
-}

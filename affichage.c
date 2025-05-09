@@ -30,15 +30,24 @@ void afficher_ligne_grille(const Carte ligne[]) {
             switch (i) {
                 case 0:
                     printf("%s╔════╗%s ", couleur, RESET);
+                    
                     break;
+                
                 case 1:
-                    if (carte.visible)
-                        printf("%s║ %3d║%s ", couleur, carte.valeur, RESET);
-                    else
+                   	if (carte.visible)
+                        printf("%s║%3d ║%s ", couleur, carte.valeur, RESET);
+                    	
+                    	else
                         printf("║CARD║ ");
+                    
                     break;
+                
                 case 2:
+                	if (carte.visible)
+                        	printf("%s║    ║%s ", couleur, RESET);
+                    	else
                     printf("║YARD║ ");
+                    
                     break;
                 case 3:
                     printf("%s╚════╝%s ", couleur, RESET);
@@ -66,10 +75,12 @@ printf("║                      🎴 TABLE CARD YARD 🎴                     �
 printf("╚════════════════════════════════════════════════════════════════╝\n\n");
 printf("\033[0m");
 
+
     for (int i = 0; i < partie->nb_joueurs; i++) {
-        printf("\nJoueur %d (%s) :\n", i + 1, partie->joueurs[i].nom);
-        afficher_grille_joueur(&partie->joueurs[i]);
+printf("\x1b[1;34m🎲 Joueur %d : \x1b[1;33m%s\x1b[0m\n", i + 1, partie->joueurs[i].nom);
+afficher_grille_joueur(&partie->joueurs[i]);
     }
+    
 
     if (partie->defausse_active) {
         printf("\nDéfausse actuelle : ");
@@ -111,3 +122,5 @@ void afficher_gagnant(const Partie *partie) {
     // Message fun pour le perdant
     printf("\n😅 Et pendant ce temps, %s termine avec %d points...\n",
            partie->joueurs[perdant_index].nom, max_score);
+    printf("💥 Courage ! Même les plus grands ont commencé avec une défaite 😎\n");
+}

@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -15,6 +16,15 @@
 #define VERT        "\033[32m"
 #define JAUNE       "\033[33m"
 #define ROUGE       "\033[31m"
+
+#define COLOR_RESET   "\033[0m"
+#define COLOR_YELLOW  "\033[1;33m"
+#define COLOR_CYAN    "\033[1;36m"
+#define COLOR_GREEN   "\033[1;32m"
+#define COLOR_BLUE    "\033[1;34m"
+#define COLOR_MAGENTA "\033[1;35m"
+#define COLOR_RED     "\033[1;31m"
+#define COLOR_WHITE   "\033[1;37m"
 
 #include "jeu.h"
 #include "affichage.h"
@@ -44,7 +54,8 @@ printf("\033[0m");
 
     int valid_input;
     do {
-        printf("Nombre de joueurs (2-%d) : ", MAX_JOUEURS);
+        printf(COLOR_YELLOW "👥 Nombre de joueurs " COLOR_RESET "(" COLOR_CYAN "2-%d" COLOR_RESET ") : 🃏 ", MAX_JOUEURS);
+
         valid_input = scanf("%d", &partie->nb_joueurs);
 
         if (valid_input != 1 || partie->nb_joueurs < 2 || partie->nb_joueurs > MAX_JOUEURS) {
@@ -56,7 +67,7 @@ printf("\033[0m");
     } while (valid_input != 1 || partie->nb_joueurs < 2 || partie->nb_joueurs > MAX_JOUEURS);
 
     for (int i = 0; i < partie->nb_joueurs; i++) {
-        printf("Nom du joueur %d : ", i + 1);
+        printf(COLOR_BLUE "🧑‍💻 Nom du joueur " COLOR_MAGENTA "%d" COLOR_RESET " : ", i + 1);
         scanf("%19s", partie->joueurs[i].nom);
     }
 
@@ -151,7 +162,8 @@ void tour_joueur(Partie *partie) {
     int l, c;
     // Saisie sécurisée des coordonnées
     do {
-        printf("Échange avec quelle carte ? (Ligne 0-2 / Colonne 0-3) : ");
+       printf(COLOR_GREEN "🔁 Échange avec quelle carte ? " COLOR_RESET
+       "(" COLOR_CYAN "Ligne 0-2" COLOR_RESET " / " COLOR_YELLOW "Colonne 0-3" COLOR_RESET ") : ");
 
         if (!fgets(buffer, sizeof(buffer), stdin)) {
             printf("Erreur de lecture. Réessayez.\n");
@@ -159,7 +171,10 @@ void tour_joueur(Partie *partie) {
         }
 
         if (sscanf(buffer, "%d %d", &l, &c) != 2 || l < 0 || l > 2 || c < 0 || c > 3) {
-            printf("❌ Erreur. Vous devez entrer exactement deux entiers séparés d'un espace !,par exemple :1 2,(ligne 0-2 et colonne 0-3)\n");
+            printf(COLOR_RED "❌ Erreur : " 
+       "Vous devez entrer exactement deux entiers séparés d'un espace !\n"
+       "📌 Exemple valide : " COLOR_CYAN "1 2" 
+       " (ligne 0-2 et colonne 0-3)\n" COLOR_RESET);
         } else {
             break;  // Entrée correcte
         }
@@ -221,3 +236,5 @@ int calculer_score(const Joueur *joueur) {
             score += joueur->grille[l][c].valeur;
         }
     }
+    return score;
+}

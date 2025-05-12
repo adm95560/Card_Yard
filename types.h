@@ -11,7 +11,7 @@
 
 // Structure représentant une carte
 typedef struct {
-    int valeur;     // Valeur de la carte (ex : -2, 0, 5, etc.)
+    int valeur;     // Valeur de la carte 
     bool visible;   // true si la carte est retournée, false si elle est face cachée
 } Carte;
 
